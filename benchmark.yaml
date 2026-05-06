@@ -1,0 +1,74 @@
+name: single-cell perturbation benchmark
+id: omni-perturb
+description: Here, we benchmark different stages of an scPerturb-seq pipeline
+benchmarker: "Atreya Choudhury"
+version: "1.0"
+
+software_backend: "conda"
+
+software_environments:
+  raw_data:
+    name: Environment for raw MEX data fetching
+    conda: envs/raw-data.yaml
+  crispat:
+    name: Environment for crispat guide assignment
+    conda: envs/crispat.yaml
+
+stages:
+  # - id: data
+  #   resources:
+  #     cores: 4
+  #   outputs:
+  #     - id: rawdata.h5ad
+  #       path: "{dataset}.h5ad"
+  #   modules:
+  #     - id: omni-data
+  #       name: omni-data hapiq fetcher
+  #       software_environment: omni_data
+  #       repository:
+  #         url: https://github.com/btraven00/omni-data
+  #         commit: main
+  #       parameters:
+  #         - source: "scperturb"
+  #           accession:
+  #             - "NormanWeissman2019"
+  #             - "ReplogleWeissman2022_K562_essential"
+  #             - "ReplogleWeissman2022_K562_gwps"
+  #           include_ext: ".h5ad"
+
+  - id: data
+    outputs:
+      - id: rawcounts.h5mu
+        path: "{dataset}.h5mu"
+    resources:
+      cores: 6
+      memory: "64GB"
+    modules:
+      - id: count-data
+        name: Perturb-seq MEX fetcher and MuData converter
+        software_environment: raw_data
+        repository:
+          url: https://github.com/omni-perturb/count-data
+          commit: main
+        parameters:
+          - dataset_name: ["K562_essential", "rpe1"]
+
+  - id: guide-assignment
+    inputs:
+      - rawcounts.h5mu
+    outputs:
+      - id: assignments.h5ad
+        path: "{dataset}.h5ad"
+    resources:
+      cores: 1
+    modules:
+      - id: crispat-pgmm
+        name: crispat guide assignment models
+        software_environment: crispat
+        repository:
+          url: https://github.com/omni-perturb/count-data
+          commit: main
+        parameters:
+          - method: "pgmm"
+            n_iter: 100
+            # method: ["pgmm", "gauss", "2beta", "3beta"]
