@@ -62,11 +62,11 @@ stages:
     resources:
       cores: 1
     modules:
-      - id: crispat-pgmm
+      - id: crispat
         name: crispat guide assignment models
         software_environment: crispat
         repository:
-          url: https://github.com/omni-perturb/count-data
+          url: https://github.com/omni-perturb/crispat
           commit: main
         parameters:
           - method: "pgmm"
