@@ -13,6 +13,12 @@ software_environments:
   crispat:
     name: Environment for crispat guide assignment
     conda: envs/crispat.yaml
+  kaichi:
+    name: Environment for kaichi guide assignment
+    conda: envs/kaichi.yaml
+  metrics:
+    name: Environment for guide assignment metrics
+    conda: envs/metrics.yaml
 
 stages:
   # - id: data
@@ -66,9 +72,38 @@ stages:
         name: crispat guide assignment models
         software_environment: crispat
         repository:
+          # url: ../crispat
           url: https://github.com/omni-perturb/crispat
           commit: main
         parameters:
           - method: "pgmm"
             n_iter: 100
             # method: ["pgmm", "gauss", "2beta", "3beta"]
+      - id: kaichi
+        name: kaichi guide assignment models
+        software_environment: kaichi
+        repository:
+          url: https://github.com/omni-perturb/kaichi
+          commit: main
+        parameters:
+          - model: ["umi", "max", "ratio", "poisson_gauss"]
+
+  - id: metrics
+    inputs:
+      - assignments.h5ad
+      - rawcounts.h5mu
+    outputs:
+      - id: metrics.parquet
+        path: "{dataset}.parquet"
+      - id: metrics.tsv
+        path: "{dataset}.tsv"
+    resources:
+      cores: 2
+      memory: "16GB"
+    modules:
+      - id: metrics
+        name: Guide assignment metrics
+        software_environment: metrics
+        repository:
+          url: https://github.com/omni-perturb/metrics
+          commit: ce181a0

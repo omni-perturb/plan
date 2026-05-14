@@ -15,4 +15,4 @@ dependencies:
   - pertpy >=1.0.3,<2
   - pip
   - pip:
-    - crispat
+    - crispat @ git+https://github.com/btraven00/crispat@parallel-gauss

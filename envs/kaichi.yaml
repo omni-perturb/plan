@@ -1,0 +1,14 @@
+name: kaichi
+channels:
+  - file://${HOME}/conda-bld
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python >=3.10,<3.12
+  - kaichi-cli *
+  - anndata >=0.10
+  - muon *
+  - pandas >=2.0
+  - numpy >=1.24,<2.0
+  - scipy >=1.10
